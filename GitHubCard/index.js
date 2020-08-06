@@ -1,8 +1,19 @@
+import axios from 'axios';
+
+const entryPoint = document.querySelector('.cards')
 /*
   STEP 1: using axios, send a GET request to the following URL
     (replacing the placeholder with your Github name):
     https://api.github.com/users/<your name>
 */
+axios.get('https://api.github.com/users/lightDarkPhoton')
+.then(function successHandler(response) {
+  console.log(response)
+  //debugger
+  const card = githubCardMaker(response)
+  entryPoint.appendChild(card)
+
+})
 
 /*
   STEP 2: Inspect and study the data coming back, this is YOUR
@@ -28,7 +39,15 @@
     user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+const followersArray = ['tetondan', 'dustinmyers', 'justsml', 'luishrd', 'bigknell'];
+
+followersArray.forEach (elem => {
+  axios.get('https://api.github.com/users/' + `${elem}`)
+  .then(function successHandler(response) {
+    const card = githubCardMaker(response)
+    entryPoint.appendChild(card)
+  })
+})
 
 /*
   STEP 3: Create a function that accepts a single object as its only argument.
@@ -49,6 +68,54 @@ const followersArray = [];
       </div>
     </div>
 */
+
+function githubCardMaker(response) {
+
+  // Creating the elements
+  const githubCard = document.createElement('div')
+  const userImage = document.createElement('image')
+  const cardInfo = document.createElement('div')
+  const heading = document.createElement('h3')
+  const userNameParagraph = document.createElement('p')
+  const locationParagraph = document.createElement('p')
+  const profileParagraph = document.createElement('p')
+  const profileParagraphHyperlink = document.createElement('a')
+  const followersParagraph = document.createElement('p')
+  const followingParagraph = document.createElement('p')
+  const bioParagraph = document.createElement('p')
+
+  // Setting class names, attributes, and text
+  githubCard.classList.add('card')
+  userImage.src = response.data["avatar_url"]
+  cardInfo.classList.add('card-info')
+  heading.classList.add('name')
+  userNameParagraph.classList.add('username')
+
+  heading.textContent = `${response.data.name}`
+  userNameParagraph.textContent = `${response.data.login}`
+  locationParagraph.textContent = `Location: ${response.data.location}`
+  profileParagraph.textContent = "Profile:"
+  profileParagraphHyperlink.setAttribute('href', `${response.data['html_url']}`)
+  profileParagraphHyperlink.textContent = `${response.data['html_url']}`
+  followersParagraph.textContent = `${response.data.followers}`
+  followingParagraph.textContent = `${response.data.following}`
+  bioParagraph.textContent = `Bio: ${response.data.bio}`
+
+  // Creating the hierarchy
+  githubCard.appendChild(userImage)
+  githubCard.appendChild(cardInfo)
+  cardInfo.appendChild(heading)
+  cardInfo.appendChild(userNameParagraph)
+  cardInfo.appendChild(locationParagraph)
+  cardInfo.appendChild(profileParagraph)
+  profileParagraph.appendChild(profileParagraphHyperlink)
+  cardInfo.appendChild(followersParagraph)
+  cardInfo.appendChild(followingParagraph)
+  cardInfo.appendChild(bioParagraph)
+
+  return githubCard
+}
+
 
 /*
   List of LS Instructors Github username's:
